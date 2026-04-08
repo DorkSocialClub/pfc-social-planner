@@ -709,9 +709,10 @@ function loadState() {
     const saved = localStorage.getItem('pfc-planner');
     if (saved) {
       const parsed = JSON.parse(saved);
-      state.postingDays = parsed.postingDays || state.postingDays;
-      state.posts = parsed.posts || state.posts;
-      state.grid = parsed.grid || state.grid;
+      // Only load if arrays are actually non-empty — never overwrite defaults with []
+      if (parsed.postingDays && parsed.postingDays.length > 0) state.postingDays = parsed.postingDays;
+      if (parsed.posts) state.posts = parsed.posts;
+      if (parsed.grid && parsed.grid.length > 0) state.grid = parsed.grid;
     }
   } catch(e) {}
 }
