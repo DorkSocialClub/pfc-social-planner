@@ -289,15 +289,16 @@
 
   /* ── Day editor modal ── */
   .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.35); z-index: 100;
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 1000;
     align-items: center; justify-content: center; padding: 20px;
   }
-  .modal-overlay.open { display: flex; }
+  .modal-overlay.open { display: flex !important; }
   .modal {
     background: var(--pfc-white); border-radius: var(--radius-lg);
     padding: 24px; width: 100%; max-width: 440px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-md); position: relative; z-index: 1001;
   }
   .modal-title { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 16px; }
   .modal label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--pfc-grey); display: block; margin-bottom: 6px; }
@@ -311,6 +312,16 @@
   }
   .modal input:focus, .modal select:focus { border-color: var(--pfc-green); background: white; }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+
+  /* ── Copy toast ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--pfc-green-dark); color: white;
+    padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    z-index: 2000; transition: transform 0.3s ease; pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
 
   /* ── Footer ── */
   .footer {
@@ -433,6 +444,8 @@
 <div class="footer">
   Prescott Family Chiropractic · Social Planner · Built by <a href="https://dorksocialclub.com" target="_blank">Dork Social Club</a>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 const PILLARS = [
@@ -581,6 +594,7 @@ function clickSlot(day) {
 function removeDay(day) {
   state.postingDays = state.postingDays.filter(d=>d!==day);
   state.posts = state.posts.filter(p=>p.day!==day);
+  saveState();
   buildWeek();
 }
 
@@ -595,6 +609,7 @@ function confirmAddDay() {
     state.postingDays.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
   }
   closeAddDay();
+  saveState();
   buildWeek();
 }
 
@@ -658,11 +673,34 @@ function buildDayBtns() {
   });
 }
 
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function saveState() {
+  try { localStorage.setItem('pfc-planner', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('pfc-planner');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state.postingDays = parsed.postingDays || state.postingDays;
+      state.posts = parsed.posts || state.posts;
+      state.grid = parsed.grid || state.grid;
+    }
+  } catch(e) {}
+}
+
 function addPost() {
   const { pillar, format, dr, day } = state.composer;
   const idea = document.getElementById('ideaInput').value.trim();
   if (!pillar || !idea) {
-    alert('Please select a pillar and enter a post idea.');
+    showToast('Pick a pillar and add a post idea first!');
     return;
   }
   if (day) {
@@ -671,7 +709,6 @@ function addPost() {
     if (existing >= 0) state.posts[existing] = entry;
     else state.posts.push(entry);
   }
-  // push to grid
   const emptyIdx = state.grid.findIndex(c=>c===null);
   if (emptyIdx >= 0) {
     state.grid[emptyIdx] = { pillar, format:format||'Photo', dr:dr||'Both', label:idea.substring(0,24) };
@@ -679,14 +716,15 @@ function addPost() {
     state.grid.push({ pillar, format:format||'Photo', dr:dr||'Both', label:idea.substring(0,24) });
     state.grid.shift();
   }
-  // clear latest badge
   state.grid.forEach(c=>{ if(c) c.latest=false; });
   const newCell = state.grid[emptyIdx>=0?emptyIdx:state.grid.length-1];
   if (newCell) newCell.latest = true;
 
   document.getElementById('ideaInput').value = '';
+  saveState();
   buildGrid();
   buildWeek();
+  showToast('Post added!');
 }
 
 function sendToAI() {
@@ -694,17 +732,31 @@ function sendToAI() {
   const idea = document.getElementById('ideaInput').value.trim();
   const p = pillar ? P(pillar) : null;
   const prompt = [
-    `I'm planning a social media post for Prescott Family Chiropractic (posting on Instagram and Facebook).`,
+    `Write 2–3 Instagram/Facebook caption options for Prescott Family Chiropractic.`,
     p ? `Content pillar: ${p.label}.` : '',
     format ? `Format: ${format}.` : '',
     dr ? `Featuring: ${dr}.` : '',
     idea ? `Post idea: ${idea}.` : '',
-    `Please write 2–3 caption options that feel warm, educational, and community-focused — not salesy. They should speak to Prescott families and reflect the authentic, heart-centered vibe of the practice. Keep captions concise and punchy for Instagram, with a clear hook at the start.`,
+    `Tone: warm, educational, community-focused — not salesy. Speak to Prescott families. Strong hook at the start. Concise and punchy.`,
   ].filter(Boolean).join(' ');
-  if (typeof sendPrompt === 'function') sendPrompt(prompt);
+
+  if (typeof sendPrompt === 'function') {
+    sendPrompt(prompt);
+  } else {
+    navigator.clipboard.writeText(prompt).then(() => {
+      showToast('Caption brief copied! Paste into ChatGPT or Claude.');
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = prompt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Caption brief copied! Paste into ChatGPT or Claude.');
+    });
+  }
 }
 
 /* ── Init ── */
+loadState();
 buildPillars();
 buildGrid();
 buildWeek();
