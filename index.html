@@ -254,7 +254,7 @@
     font-family: 'DM Sans', sans-serif;
   }
   .sel-btn:hover { border-color: #999; color: var(--pfc-black); }
-  .sel-btn.active { border-width: 1.5px; font-weight: 600; }
+  .sel-btn.active { border-width: 1.5px; font-weight: 600; background: #EAF2EC !important; border-color: #3A6B4A !important; color: #1F3D2A !important; }
 
   textarea.idea-input {
     width: 100%;
@@ -501,7 +501,9 @@ function buildPillars() {
 function buildGrid() {
   const el = document.getElementById('grid9');
   el.innerHTML = '';
-  state.grid.forEach((cell) => {
+  // Newest top-left like real IG — reverse the array so latest is first
+  const display = [...state.grid].reverse();
+  display.forEach((cell) => {
     const d = document.createElement('div');
     d.className = 'grid-cell' + (cell ? ' filled' : '') + (cell && cell.latest ? ' latest' : '');
     if (cell) {
@@ -641,8 +643,14 @@ function buildFormatBtns() {
   el.innerHTML = '';
   FORMATS.forEach(f => {
     const btn = document.createElement('button');
-    btn.className = 'sel-btn' + (state.composer.format===f?' active':'');
+    const isActive = state.composer.format === f;
+    btn.className = 'sel-btn' + (isActive ? ' active' : '');
     btn.textContent = f;
+    if (isActive) {
+      btn.style.background = '#EAF2EC';
+      btn.style.borderColor = '#3A6B4A';
+      btn.style.color = '#1F3D2A';
+    }
     btn.onclick = () => { state.composer.format = f; buildFormatBtns(); };
     el.appendChild(btn);
   });
@@ -653,8 +661,14 @@ function buildDrBtns() {
   el.innerHTML = '';
   DOCTORS.forEach(d => {
     const btn = document.createElement('button');
-    btn.className = 'sel-btn' + (state.composer.dr===d?' active':'');
+    const isActive = state.composer.dr === d;
+    btn.className = 'sel-btn' + (isActive ? ' active' : '');
     btn.textContent = d;
+    if (isActive) {
+      btn.style.background = '#EAF2EC';
+      btn.style.borderColor = '#3A6B4A';
+      btn.style.color = '#1F3D2A';
+    }
     btn.onclick = () => { state.composer.dr = d; buildDrBtns(); };
     el.appendChild(btn);
   });
@@ -666,8 +680,14 @@ function buildDayBtns() {
   el.innerHTML = '';
   state.postingDays.forEach(d => {
     const btn = document.createElement('button');
-    btn.className = 'sel-btn' + (state.composer.day===d?' active':'');
+    const isActive = state.composer.day === d;
+    btn.className = 'sel-btn' + (isActive ? ' active' : '');
     btn.textContent = d.slice(0,3);
+    if (isActive) {
+      btn.style.background = '#EAF2EC';
+      btn.style.borderColor = '#3A6B4A';
+      btn.style.color = '#1F3D2A';
+    }
     btn.onclick = () => { state.composer.day = d; buildDayBtns(); };
     el.appendChild(btn);
   });
