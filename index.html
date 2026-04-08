@@ -170,60 +170,67 @@
   .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
   .legend-item.missing { opacity: 0.35; }
 
-  /* ── Week Planner ── */
-  .week-header {
+  /* ── Calendar ── */
+  .cal-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
-  .week-nav { display: flex; gap: 6px; }
-  .week-nav button {
-    width: 26px; height: 26px;
-    border-radius: 50%;
+  .cal-nav { display: flex; gap: 6px; align-items: center; }
+  .cal-nav button {
+    width: 26px; height: 26px; border-radius: 50%;
     border: 1px solid var(--pfc-grey-border);
     background: transparent; cursor: pointer;
     font-size: 12px; color: var(--pfc-grey);
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.1s;
+    transition: background 0.1s; line-height: 1;
   }
-  .week-nav button:hover { background: var(--pfc-grey-light); }
+  .cal-nav button:hover { background: var(--pfc-grey-light); }
+  .cal-month-label { font-size: 13px; font-weight: 600; color: var(--pfc-black); min-width: 110px; text-align: center; }
 
-  .week-slots { display: flex; flex-direction: column; gap: 7px; }
-  .slot { display: grid; grid-template-columns: 50px 1fr auto; gap: 8px; align-items: center; }
-  .slot-day {
-    font-size: 11px; font-weight: 600; color: var(--pfc-grey);
-    display: flex; flex-direction: column; gap: 1px;
+  .cal-dow {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 2px; margin-bottom: 3px;
   }
-  .slot-day span { font-size: 9px; font-weight: 400; color: #B0B4A8; }
-  .slot-card {
-    background: var(--pfc-grey-light);
-    border: 1px solid var(--pfc-grey-border);
-    border-radius: var(--radius-md);
-    padding: 8px 10px;
-    display: flex; align-items: center; gap: 8px;
-    cursor: pointer; transition: border-color 0.15s; min-height: 42px;
+  .cal-dow span {
+    font-size: 9px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--pfc-grey);
+    text-align: center; padding: 2px 0;
   }
-  .slot-card:hover { border-color: #aaa; }
-  .slot-card.has-post { background: var(--pfc-white); }
-  .slot-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .slot-text { font-size: 11.5px; color: var(--pfc-black); flex: 1; line-height: 1.3; font-weight: 500; }
-  .slot-meta { font-size: 10px; color: var(--pfc-grey); white-space: nowrap; }
-  .slot-empty { font-size: 11px; color: #B0B4A8; flex: 1; font-style: italic; }
-  .slot-del {
-    width: 22px; height: 22px; border-radius: 50%;
-    border: none; background: transparent; cursor: pointer;
-    font-size: 13px; color: #C8CCBC; display: flex;
-    align-items: center; justify-content: center;
-    transition: color 0.1s; flex-shrink: 0;
-    line-height: 1;
+
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-cell {
+    aspect-ratio: 1; border-radius: 6px;
+    border: 1px solid transparent;
+    display: flex; flex-direction: column;
+    align-items: center; padding: 3px 2px;
+    cursor: default; position: relative;
+    transition: border-color 0.12s, background 0.12s;
+    min-height: 36px;
   }
-  .slot-del:hover { color: #E05252; }
+  .cal-cell.posting-day { cursor: pointer; border-color: var(--pfc-grey-border); background: var(--pfc-grey-light); }
+  .cal-cell.posting-day:hover { border-color: var(--pfc-green); background: #EAF2EC; }
+  .cal-cell.has-post { background: var(--pfc-white); border-color: var(--pfc-grey-border); }
+  .cal-cell.today .cal-date { background: var(--pfc-green); color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+  .cal-cell.other-month { opacity: 0.3; }
+  .cal-cell.past { opacity: 0.55; }
+
+  .cal-date { font-size: 10px; font-weight: 500; color: var(--pfc-black); line-height: 18px; }
+  .cal-pills { display: flex; flex-direction: column; gap: 1px; width: 100%; margin-top: 1px; }
+  .cal-pill {
+    width: 100%; border-radius: 2px;
+    font-size: 7px; font-weight: 600;
+    padding: 1px 3px; line-height: 1.4;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    cursor: pointer;
+  }
+  .cal-pill:hover { opacity: 0.8; }
 
   .add-day-btn {
     background: transparent; border: 1px dashed var(--pfc-grey-border);
     border-radius: var(--radius-md); padding: 7px 12px;
     font-size: 11px; color: var(--pfc-grey); cursor: pointer;
     transition: border-color 0.15s, color 0.15s; width: 100%; text-align: center;
-    margin-top: 6px; font-family: 'DM Sans', sans-serif;
+    margin-top: 8px; font-family: 'DM Sans', sans-serif;
   }
   .add-day-btn:hover { border-color: var(--pfc-green); color: var(--pfc-green); }
 
@@ -376,18 +383,22 @@
       <div class="legend" id="legend9"></div>
     </div>
 
-    <!-- Week planner -->
+    <!-- Calendar -->
     <div class="card">
-      <div class="week-header">
-        <div class="section-title" style="margin-bottom:0;">This week</div>
-        <div class="week-nav">
-          <button onclick="shiftWeek(-1)" title="Previous week">&#8592;</button>
-          <button onclick="shiftWeek(1)" title="Next week">&#8594;</button>
+      <div class="cal-header">
+        <div class="section-title" style="margin-bottom:0;">Posting calendar</div>
+        <div class="cal-nav">
+          <button onclick="shiftMonth(-1)" title="Previous month">&#8592;</button>
+          <span class="cal-month-label" id="calMonthLabel"></span>
+          <button onclick="shiftMonth(1)" title="Next month">&#8594;</button>
         </div>
       </div>
-      <div id="weekLabel" style="font-size:11px;color:var(--pfc-grey);margin-bottom:10px;"></div>
-      <div class="week-slots" id="weekSlots"></div>
-      <button class="add-day-btn" onclick="openAddDay()">+ Add posting day</button>
+      <div class="cal-dow">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
+        <span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <button class="add-day-btn" onclick="openAddDay()">+ Add / remove posting days</button>
     </div>
 
   </div>
@@ -409,8 +420,8 @@
       <div id="drBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
     </div>
     <div class="composer-row">
-      <span class="c-label">Day</span>
-      <div id="dayBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      <span class="c-label">Date</span>
+      <div id="dayBtns" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;"></div>
     </div>
 
     <textarea class="idea-input" id="ideaInput" rows="2" placeholder="Post idea, topic, or caption direction..."></textarea>
@@ -423,20 +434,15 @@
 
 </div>
 
-<!-- Add Day Modal -->
+<!-- Add / Remove Posting Days Modal -->
 <div class="modal-overlay" id="addDayModal">
   <div class="modal">
-    <div class="modal-title">Add posting day</div>
-    <label>Day of week</label>
-    <select id="newDaySelect">
-      <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
-      <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
-    </select>
-    <label>Optional note</label>
-    <input type="text" id="newDayNote" placeholder="e.g. bonus post week" />
+    <div class="modal-title">Posting days</div>
+    <p style="font-size:12px;color:#6B7280;margin-bottom:14px;">Check the days you want to post each week.</p>
+    <div id="dayCheckboxes" style="display:flex;flex-direction:column;gap:4px;margin-bottom:16px;"></div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeAddDay()">Cancel</button>
-      <button class="btn-primary" onclick="confirmAddDay()">Add day</button>
+      <button class="btn-primary" onclick="confirmAddDay()">Save</button>
     </div>
   </div>
 </div>
@@ -458,16 +464,14 @@ const PILLARS = [
 ];
 const FORMATS = ['Photo','Video','Phone content'];
 const DOCTORS = ['Dr. Nick','Dr. Tate','Both'];
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 let state = {
-  weekOffset: 0,
+  calOffset: 0,
   postingDays: ['Monday','Wednesday','Friday'],
-  posts: [
-    { day:'Monday',    pillar:'edu',  format:'Video',        dr:'Dr. Tate', idea:'What happens to your spine during pregnancy?' },
-    { day:'Wednesday', pillar:'fam',  format:'Photo',        dr:'Both',     idea:"Families at PFC — patient kids after adjustment" },
-  ],
+  posts: {},
   grid: [
-    { pillar:'edu',  format:'Video',        dr:'Dr. Tate', label:'Adjustment explained', latest:true },
+    { pillar:'edu',  format:'Video',        dr:'Dr. Tate', label:'Adjustment explained', latest:false },
     { pillar:'fam',  format:'Photo',        dr:'Both',     label:'Team family moment' },
     { pillar:'nick', format:'Phone content',dr:'Dr. Nick', label:'Morning thought' },
     { pillar:'well', format:'Photo',        dr:'Dr. Nick', label:'Trail hike weekend' },
@@ -477,198 +481,195 @@ let state = {
     { pillar:'fam',  format:'Phone content',dr:'Both',     label:'Office family moment' },
     null,
   ],
-  composer: { pillar:null, format:null, dr:null, day:null },
+  composer: { pillar:null, format:null, dr:null, date:null },
 };
 
 function P(id) { return PILLARS.find(p=>p.id===id); }
 
-/* ── Pillars strip ── */
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function isPostingDay(d) { return state.postingDays.includes(DAY_NAMES[d.getDay()]); }
+
 function buildPillars() {
   const el = document.getElementById('pillarsGrid');
   el.innerHTML = '';
   PILLARS.forEach(p => {
     const d = document.createElement('div');
     d.className = 'pillar-chip';
-    d.style.background = p.bg;
-    d.style.borderColor = p.border;
-    d.style.color = p.dark;
+    d.style.background = p.bg; d.style.borderColor = p.border; d.style.color = p.dark;
     d.innerHTML = `<span class="chip-dot" style="background:${p.color}"></span>${p.label}`;
     el.appendChild(d);
   });
 }
 
-/* ── 9-grid ── */
 function buildGrid() {
   const el = document.getElementById('grid9');
   el.innerHTML = '';
-  // Newest top-left like real IG — reverse the array so latest is first
-  const display = [...state.grid].reverse();
-  display.forEach((cell) => {
+  [...state.grid].reverse().forEach(cell => {
     const d = document.createElement('div');
-    d.className = 'grid-cell' + (cell ? ' filled' : '') + (cell && cell.latest ? ' latest' : '');
+    d.className = 'grid-cell' + (cell?' filled':'') + (cell&&cell.latest?' latest':'');
     if (cell) {
       const p = P(cell.pillar);
-      d.innerHTML = (cell.latest ? '<span class="cell-badge">NEW</span>' : '') +
-        `<div class="cell-dot" style="background:${p.color}"></div>
-         <div class="cell-label">${cell.label}</div>
-         <div class="cell-format">${cell.format}</div>`;
-    } else {
-      d.innerHTML = '<span class="cell-empty">+</span>';
-    }
+      d.innerHTML = (cell.latest?'<span class="cell-badge">NEW</span>':'') +
+        `<div class="cell-dot" style="background:${p.color}"></div><div class="cell-label">${cell.label}</div><div class="cell-format">${cell.format}</div>`;
+    } else { d.innerHTML = '<span class="cell-empty">+</span>'; }
     el.appendChild(d);
   });
-
   const legend = document.getElementById('legend9');
   legend.innerHTML = '';
   const covered = new Set(state.grid.filter(Boolean).map(c=>c.pillar));
   PILLARS.forEach(p => {
     const d = document.createElement('div');
-    d.className = 'legend-item' + (covered.has(p.id) ? '' : ' missing');
+    d.className = 'legend-item' + (covered.has(p.id)?'':' missing');
     d.innerHTML = `<div class="legend-dot" style="background:${covered.has(p.id)?p.color:'#C8CCBC'}"></div>${p.label}`;
     legend.appendChild(d);
   });
-
-  // Gap alert
   const missing = PILLARS.filter(p=>!covered.has(p.id)).map(p=>p.label);
-  const alert = document.getElementById('gapAlert');
+  const alertEl = document.getElementById('gapAlert');
   if (missing.length) {
-    alert.style.display = 'flex';
-    document.getElementById('gapText').textContent =
-      `Grid gap: no "${missing.join('" or "')}" post in your last 9. Post one soon to keep your feed balanced.`;
-  } else {
-    alert.style.display = 'none';
+    alertEl.style.display = 'flex';
+    document.getElementById('gapText').textContent = `Grid gap: no "${missing.join('" or "')}" post in your last 9. Post one soon to keep your feed balanced.`;
+  } else { alertEl.style.display = 'none'; }
+}
+
+function shiftMonth(dir) { state.calOffset += dir; buildCalendar(); }
+
+function buildCalendar() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const view = new Date(today.getFullYear(), today.getMonth() + state.calOffset, 1);
+  const year = view.getFullYear(), month = view.getMonth();
+  document.getElementById('calMonthLabel').textContent = view.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const firstDay = new Date(year, month, 1);
+  const startOffset = firstDay.getDay();
+  const totalDays = new Date(year, month+1, 0).getDate();
+  const totalCells = Math.ceil((startOffset + totalDays) / 7) * 7;
+  const minDate = new Date(today.getFullYear(), today.getMonth()-2, 1);
+  const maxDate = new Date(today.getFullYear(), today.getMonth()+5, 0);
+
+  for (let i = 0; i < totalCells; i++) {
+    const cellDate = new Date(year, month, 1 - startOffset + i);
+    cellDate.setHours(0,0,0,0);
+    const key = dateKey(cellDate);
+    const isThisMonth = cellDate.getMonth() === month;
+    const isToday = cellDate.getTime() === today.getTime();
+    const isPast = cellDate < today;
+    const isPlanning = isPostingDay(cellDate) && isThisMonth && cellDate >= minDate && cellDate <= maxDate;
+    const post = state.posts[key];
+    const isSelected = state.composer.date === key;
+
+    const cell = document.createElement('div');
+    let cls = 'cal-cell';
+    if (!isThisMonth) cls += ' other-month';
+    else if (isPast && !isToday) cls += ' past';
+    if (isToday) cls += ' today';
+    if (isPlanning && !post) cls += ' posting-day';
+    if (post) cls += ' has-post';
+    cell.className = cls;
+    if (isSelected) cell.style.cssText = 'box-shadow:0 0 0 2px #3A6B4A;border-color:#3A6B4A;border:1px solid #3A6B4A;';
+
+    const dateEl = document.createElement('div');
+    dateEl.className = 'cal-date';
+    dateEl.textContent = cellDate.getDate();
+    cell.appendChild(dateEl);
+
+    if (post && isThisMonth) {
+      const p = P(post.pillar);
+      const pills = document.createElement('div');
+      pills.className = 'cal-pills';
+      const pill = document.createElement('div');
+      pill.className = 'cal-pill';
+      pill.style.background = p.bg; pill.style.color = p.dark;
+      pill.textContent = post.idea.substring(0,12);
+      pill.title = `${post.idea} — click to remove`;
+      pill.onclick = e => { e.stopPropagation(); removePost(key); };
+      pills.appendChild(pill);
+      cell.appendChild(pills);
+    }
+
+    if ((isPlanning || post) && isThisMonth) {
+      cell.style.cursor = 'pointer';
+      cell.onclick = () => {
+        state.composer.date = key;
+        buildDayBtns();
+        document.querySelector('.composer').scrollIntoView({behavior:'smooth',block:'nearest'});
+        buildCalendar();
+      };
+    }
+    grid.appendChild(cell);
   }
-}
-
-/* ── Week planner ── */
-function getWeekDates(offset) {
-  const now = new Date();
-  const day = now.getDay();
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
-  return monday;
-}
-
-function formatWeekLabel(offset) {
-  const monday = getWeekDates(offset);
-  const friday = new Date(monday); friday.setDate(monday.getDate() + 4);
-  const opts = { month:'short', day:'numeric' };
-  if (offset === 0) return `This week · ${monday.toLocaleDateString('en-US',opts)} – ${friday.toLocaleDateString('en-US',opts)}`;
-  if (offset === -1) return `Last week · ${monday.toLocaleDateString('en-US',opts)} – ${friday.toLocaleDateString('en-US',opts)}`;
-  if (offset === 1) return `Next week · ${monday.toLocaleDateString('en-US',opts)} – ${friday.toLocaleDateString('en-US',opts)}`;
-  return `${monday.toLocaleDateString('en-US',opts)} – ${friday.toLocaleDateString('en-US',opts)}`;
-}
-
-function buildWeek() {
-  document.getElementById('weekLabel').textContent = formatWeekLabel(state.weekOffset);
-  const el = document.getElementById('weekSlots');
-  el.innerHTML = '';
-  state.postingDays.forEach(day => {
-    const post = state.posts.find(p=>p.day===day);
-    const row = document.createElement('div');
-    row.className = 'slot';
-    row.innerHTML = `<div class="slot-day">${day.slice(0,3)}<span>${day.slice(3)}</span></div>
-      <div class="slot-card${post?' has-post':''}" id="slot-${day}" onclick="clickSlot('${day}')">
-        ${post
-          ? `<div class="slot-dot" style="background:${P(post.pillar).color}"></div>
-             <div class="slot-text">${post.idea}</div>
-             <div class="slot-meta">${post.format} · ${post.dr}</div>`
-          : `<div class="slot-empty">Open — click to add</div>`
-        }
-      </div>
-      <button class="slot-del" onclick="event.stopPropagation();removeDay('${day}')" title="Remove day">×</button>`;
-    el.appendChild(row);
-  });
-
-  // rebuild day buttons in composer
   buildDayBtns();
 }
 
-function shiftWeek(dir) { state.weekOffset += dir; buildWeek(); }
-
-function clickSlot(day) {
-  // pre-select day in composer and scroll to it
-  state.composer.day = day;
-  buildDayBtns();
-  document.querySelector('.composer').scrollIntoView({ behavior:'smooth', block:'nearest' });
+function removePost(key) {
+  delete state.posts[key];
+  saveState(); buildCalendar();
+  showToast('Post removed');
 }
 
-function removeDay(day) {
-  state.postingDays = state.postingDays.filter(d=>d!==day);
-  state.posts = state.posts.filter(p=>p.day!==day);
-  saveState();
-  buildWeek();
-}
-
-/* ── Add day modal ── */
-function openAddDay() { document.getElementById('addDayModal').classList.add('open'); }
+function openAddDay() { buildDayCheckboxes(); document.getElementById('addDayModal').classList.add('open'); }
 function closeAddDay() { document.getElementById('addDayModal').classList.remove('open'); }
-function confirmAddDay() {
-  const day = document.getElementById('newDaySelect').value;
-  if (!state.postingDays.includes(day)) {
-    const order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    state.postingDays.push(day);
-    state.postingDays.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
-  }
-  closeAddDay();
-  saveState();
-  buildWeek();
+
+function buildDayCheckboxes() {
+  const el = document.getElementById('dayCheckboxes');
+  if (!el) return;
+  el.innerHTML = '';
+  DAY_NAMES.forEach(day => {
+    const checked = state.postingDays.includes(day);
+    const label = document.createElement('label');
+    label.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:3px 0;';
+    label.innerHTML = `<input type="checkbox" ${checked?'checked':''} value="${day}" style="width:15px;height:15px;accent-color:#3A6B4A;"> ${day}`;
+    el.appendChild(label);
+  });
 }
 
-/* ── Composer ── */
-function buildComposer() {
-  buildPillarBtns();
-  buildFormatBtns();
-  buildDrBtns();
-  buildDayBtns();
+function confirmAddDay() {
+  const checkboxes = document.querySelectorAll('#dayCheckboxes input[type="checkbox"]');
+  const selected = [...checkboxes].filter(c=>c.checked).map(c=>c.value);
+  state.postingDays = selected.length > 0 ? selected : ['Monday','Wednesday','Friday'];
+  closeAddDay(); saveState(); buildCalendar();
+  showToast('Posting days updated!');
 }
+
+function buildComposer() { buildPillarBtns(); buildFormatBtns(); buildDrBtns(); buildDayBtns(); }
 
 function buildPillarBtns() {
-  const el = document.getElementById('pillarBtns');
-  el.innerHTML = '';
+  const el = document.getElementById('pillarBtns'); el.innerHTML = '';
   PILLARS.forEach(p => {
     const btn = document.createElement('button');
-    btn.className = 'sel-btn' + (state.composer.pillar===p.id?' active':'');
+    const isActive = state.composer.pillar === p.id;
+    btn.className = 'sel-btn' + (isActive?' active':'');
     btn.textContent = p.label;
-    if (state.composer.pillar===p.id) {
-      btn.style.background=p.bg; btn.style.borderColor=p.color; btn.style.color=p.dark;
-    }
+    if (isActive) { btn.style.background=p.bg; btn.style.borderColor=p.color; btn.style.color=p.dark; }
     btn.onclick = () => { state.composer.pillar = p.id; buildPillarBtns(); };
     el.appendChild(btn);
   });
 }
 
 function buildFormatBtns() {
-  const el = document.getElementById('formatBtns');
-  el.innerHTML = '';
+  const el = document.getElementById('formatBtns'); el.innerHTML = '';
   FORMATS.forEach(f => {
     const btn = document.createElement('button');
     const isActive = state.composer.format === f;
-    btn.className = 'sel-btn' + (isActive ? ' active' : '');
+    btn.className = 'sel-btn' + (isActive?' active':'');
     btn.textContent = f;
-    if (isActive) {
-      btn.style.background = '#EAF2EC';
-      btn.style.borderColor = '#3A6B4A';
-      btn.style.color = '#1F3D2A';
-    }
+    if (isActive) { btn.style.background='#EAF2EC'; btn.style.borderColor='#3A6B4A'; btn.style.color='#1F3D2A'; }
     btn.onclick = () => { state.composer.format = f; buildFormatBtns(); };
     el.appendChild(btn);
   });
 }
 
 function buildDrBtns() {
-  const el = document.getElementById('drBtns');
-  el.innerHTML = '';
+  const el = document.getElementById('drBtns'); el.innerHTML = '';
   DOCTORS.forEach(d => {
     const btn = document.createElement('button');
     const isActive = state.composer.dr === d;
-    btn.className = 'sel-btn' + (isActive ? ' active' : '');
+    btn.className = 'sel-btn' + (isActive?' active':'');
     btn.textContent = d;
-    if (isActive) {
-      btn.style.background = '#EAF2EC';
-      btn.style.borderColor = '#3A6B4A';
-      btn.style.color = '#1F3D2A';
-    }
+    if (isActive) { btn.style.background='#EAF2EC'; btn.style.borderColor='#3A6B4A'; btn.style.color='#1F3D2A'; }
     btn.onclick = () => { state.composer.dr = d; buildDrBtns(); };
     el.appendChild(btn);
   });
@@ -678,26 +679,25 @@ function buildDayBtns() {
   const el = document.getElementById('dayBtns');
   if (!el) return;
   el.innerHTML = '';
-  state.postingDays.forEach(d => {
-    const btn = document.createElement('button');
-    const isActive = state.composer.day === d;
-    btn.className = 'sel-btn' + (isActive ? ' active' : '');
-    btn.textContent = d.slice(0,3);
-    if (isActive) {
-      btn.style.background = '#EAF2EC';
-      btn.style.borderColor = '#3A6B4A';
-      btn.style.color = '#1F3D2A';
-    }
-    btn.onclick = () => { state.composer.day = d; buildDayBtns(); };
-    el.appendChild(btn);
-  });
+  if (state.composer.date) {
+    const d = new Date(state.composer.date + 'T12:00:00');
+    const label = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    const chip = document.createElement('div');
+    chip.style.cssText = 'font-size:11px;font-weight:600;padding:5px 11px;border-radius:20px;background:#EAF2EC;border:1.5px solid #3A6B4A;color:#1F3D2A;display:flex;align-items:center;gap:6px;';
+    chip.innerHTML = `${label} <span onclick="state.composer.date=null;buildDayBtns();buildCalendar();" style="cursor:pointer;opacity:0.6;font-size:13px;line-height:1;">×</span>`;
+    el.appendChild(chip);
+  } else {
+    const hint = document.createElement('span');
+    hint.style.cssText = 'font-size:11px;color:#B0B4A8;font-style:italic;';
+    hint.textContent = 'Click a posting day on the calendar above';
+    el.appendChild(hint);
+  }
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
 }
 
 function saveState() {
@@ -709,27 +709,21 @@ function loadState() {
     const saved = localStorage.getItem('pfc-planner');
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Only load if arrays are actually non-empty — never overwrite defaults with []
       if (parsed.postingDays && parsed.postingDays.length > 0) state.postingDays = parsed.postingDays;
-      if (parsed.posts) state.posts = parsed.posts;
+      if (parsed.posts && typeof parsed.posts === 'object' && !Array.isArray(parsed.posts)) state.posts = parsed.posts;
       if (parsed.grid && parsed.grid.length > 0) state.grid = parsed.grid;
     }
   } catch(e) {}
 }
 
 function addPost() {
-  const { pillar, format, dr, day } = state.composer;
+  const { pillar, format, dr, date } = state.composer;
   const idea = document.getElementById('ideaInput').value.trim();
-  if (!pillar || !idea) {
-    showToast('Pick a pillar and add a post idea first!');
-    return;
-  }
-  if (day) {
-    const existing = state.posts.findIndex(p=>p.day===day);
-    const entry = { day, pillar, format:format||'Photo', dr:dr||'Both', idea };
-    if (existing >= 0) state.posts[existing] = entry;
-    else state.posts.push(entry);
-  }
+  if (!pillar || !idea) { showToast('Pick a pillar and add a post idea first!'); return; }
+  if (!date) { showToast('Click a posting day on the calendar first!'); return; }
+
+  state.posts[date] = { pillar, format:format||'Photo', dr:dr||'Both', idea };
+
   const emptyIdx = state.grid.findIndex(c=>c===null);
   if (emptyIdx >= 0) {
     state.grid[emptyIdx] = { pillar, format:format||'Photo', dr:dr||'Both', label:idea.substring(0,24) };
@@ -742,33 +736,31 @@ function addPost() {
   if (newCell) newCell.latest = true;
 
   document.getElementById('ideaInput').value = '';
-  saveState();
-  buildGrid();
-  buildWeek();
+  state.composer.date = null;
+  saveState(); buildGrid(); buildCalendar();
   showToast('Post added!');
 }
 
 function sendToAI() {
-  const { pillar, format, dr } = state.composer;
+  const { pillar, format, dr, date } = state.composer;
   const idea = document.getElementById('ideaInput').value.trim();
   const p = pillar ? P(pillar) : null;
+  const dateStr = date ? new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}) : '';
   const prompt = [
-    `Write 2–3 Instagram/Facebook caption options for Prescott Family Chiropractic.`,
+    'Write 2–3 Instagram/Facebook caption options for Prescott Family Chiropractic.',
     p ? `Content pillar: ${p.label}.` : '',
     format ? `Format: ${format}.` : '',
     dr ? `Featuring: ${dr}.` : '',
+    dateStr ? `Posting on: ${dateStr}.` : '',
     idea ? `Post idea: ${idea}.` : '',
-    `Tone: warm, educational, community-focused — not salesy. Speak to Prescott families. Strong hook at the start. Concise and punchy.`,
+    'Tone: warm, educational, community-focused — not salesy. Speak to Prescott families. Strong hook at the start. Concise and punchy.',
   ].filter(Boolean).join(' ');
-
   if (typeof sendPrompt === 'function') {
     sendPrompt(prompt);
   } else {
-    navigator.clipboard.writeText(prompt).then(() => {
-      showToast('Caption brief copied! Paste into ChatGPT or Claude.');
-    }).catch(() => {
+    navigator.clipboard.writeText(prompt).then(()=>showToast('Caption brief copied! Paste into ChatGPT or Claude.')).catch(()=>{
       const ta = document.createElement('textarea');
-      ta.value = prompt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      ta.value = prompt; ta.style.position='fixed'; ta.style.opacity='0';
       document.body.appendChild(ta); ta.select(); document.execCommand('copy');
       document.body.removeChild(ta);
       showToast('Caption brief copied! Paste into ChatGPT or Claude.');
@@ -776,11 +768,10 @@ function sendToAI() {
   }
 }
 
-/* ── Init ── */
 loadState();
 buildPillars();
 buildGrid();
-buildWeek();
+buildCalendar();
 buildComposer();
 </script>
 </body>
