@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Planner — Prescott Family Chiropractic</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pfc-green: #3A6B4A;
+    --pfc-green-light: #EAF2EC;
+    --pfc-green-mid: #C2D9C8;
+    --pfc-green-dark: #1F3D2A;
+    --pfc-grey: #6B7280;
+    --pfc-grey-light: #F4F5F3;
+    --pfc-grey-border: #E2E4DF;
+    --pfc-white: #FFFFFF;
+    --pfc-black: #1A1C18;
+    --pfc-cream: #F8F7F3;
+
+    --p-edu:   #2E7D52; --p-edu-bg:   #EAF5EF; --p-edu-border: #A8D5B8;
+    --p-nick:  #1A5FA8; --p-nick-bg:  #EAF1FB; --p-nick-border: #A8C4E8;
+    --p-tate:  #B45309; --p-tate-bg:  #FEF3E2; --p-tate-border: #F5C784;
+    --p-fam:   #9B2335; --p-fam-bg:   #FDE8EB; --p-fam-border:  #F0A8B2;
+    --p-well:  #5B3FA6; --p-well-bg:  #F0EDFB; --p-well-border: #C4B5F0;
+    --p-comm:  #3D6B1A; --p-comm-bg:  #EDF5E0; --p-comm-border: #B5D88A;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--pfc-cream);
+    color: var(--pfc-black);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--pfc-green-dark);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-logo {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--pfc-green);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-logo svg { width: 22px; height: 22px; }
+  .header-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: #FFFFFF;
+    line-height: 1.2;
+  }
+  .header-sub { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 2px; letter-spacing: 0.04em; }
+  .header-badge {
+    font-size: 11px; font-weight: 500;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 5px 12px; border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Layout ── */
+  .main { max-width: 1080px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  .section-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--pfc-grey);
+    margin-bottom: 10px;
+  }
+
+  /* ── Pillars ── */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 700px) { .pillars-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 420px) { .pillars-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .pillar-chip {
+    padding: 9px 8px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid;
+    font-size: 11px; font-weight: 600;
+    text-align: center; cursor: default;
+    line-height: 1.3;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .pillar-chip .chip-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── Gap Alert ── */
+  .gap-alert {
+    display: none;
+    align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    background: #FEF9EC;
+    border: 1.5px solid #F5C784;
+    margin-bottom: 20px;
+    font-size: 12px; font-weight: 500; color: #7C4B10;
+  }
+  .gap-alert .ga-icon { font-size: 14px; flex-shrink: 0; }
+
+  /* ── Two col ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── Card ── */
+  .card {
+    background: var(--pfc-white);
+    border: 1px solid var(--pfc-grey-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ── 9 Grid ── */
+  .grid9 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .grid-cell {
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--pfc-grey-border);
+    background: var(--pfc-grey-light);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
+    overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s;
+    padding: 5px; text-align: center;
+  }
+  .grid-cell:hover { border-color: #aaa; box-shadow: var(--shadow-sm); }
+  .grid-cell.filled { background: var(--pfc-white); }
+  .grid-cell.latest { box-shadow: 0 0 0 2px var(--pfc-green); border-color: var(--pfc-green); }
+  .cell-dot { width: 7px; height: 7px; border-radius: 50%; margin-bottom: 3px; flex-shrink: 0; }
+  .cell-label { font-size: 8.5px; font-weight: 600; color: var(--pfc-black); line-height: 1.2; }
+  .cell-format { font-size: 7.5px; color: var(--pfc-grey); margin-top: 1px; }
+  .cell-empty { font-size: 20px; color: #C8CCBC; }
+  .cell-badge {
+    position: absolute; top: 3px; right: 3px;
+    font-size: 7px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 1px 4px; border-radius: 3px;
+    background: var(--pfc-green); color: white;
+  }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--pfc-grey); }
+  .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .legend-item.missing { opacity: 0.35; }
+
+  /* ── Week Planner ── */
+  .week-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .week-nav { display: flex; gap: 6px; }
+  .week-nav button {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--pfc-grey-border);
+    background: transparent; cursor: pointer;
+    font-size: 12px; color: var(--pfc-grey);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.1s;
+  }
+  .week-nav button:hover { background: var(--pfc-grey-light); }
+
+  .week-slots { display: flex; flex-direction: column; gap: 7px; }
+  .slot { display: grid; grid-template-columns: 50px 1fr auto; gap: 8px; align-items: center; }
+  .slot-day {
+    font-size: 11px; font-weight: 600; color: var(--pfc-grey);
+    display: flex; flex-direction: column; gap: 1px;
+  }
+  .slot-day span { font-size: 9px; font-weight: 400; color: #B0B4A8; }
+  .slot-card {
+    background: var(--pfc-grey-light);
+    border: 1px solid var(--pfc-grey-border);
+    border-radius: var(--radius-md);
+    padding: 8px 10px;
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; transition: border-color 0.15s; min-height: 42px;
+  }
+  .slot-card:hover { border-color: #aaa; }
+  .slot-card.has-post { background: var(--pfc-white); }
+  .slot-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .slot-text { font-size: 11.5px; color: var(--pfc-black); flex: 1; line-height: 1.3; font-weight: 500; }
+  .slot-meta { font-size: 10px; color: var(--pfc-grey); white-space: nowrap; }
+  .slot-empty { font-size: 11px; color: #B0B4A8; flex: 1; font-style: italic; }
+  .slot-del {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: none; background: transparent; cursor: pointer;
+    font-size: 13px; color: #C8CCBC; display: flex;
+    align-items: center; justify-content: center;
+    transition: color 0.1s; flex-shrink: 0;
+    line-height: 1;
+  }
+  .slot-del:hover { color: #E05252; }
+
+  .add-day-btn {
+    background: transparent; border: 1px dashed var(--pfc-grey-border);
+    border-radius: var(--radius-md); padding: 7px 12px;
+    font-size: 11px; color: var(--pfc-grey); cursor: pointer;
+    transition: border-color 0.15s, color 0.15s; width: 100%; text-align: center;
+    margin-top: 6px; font-family: 'DM Sans', sans-serif;
+  }
+  .add-day-btn:hover { border-color: var(--pfc-green); color: var(--pfc-green); }
+
+  /* ── Composer ── */
+  .composer {
+    background: var(--pfc-white);
+    border: 1px solid var(--pfc-grey-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+  }
+  .composer-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px; margin-bottom: 14px;
+    color: var(--pfc-black);
+  }
+  .composer-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .c-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--pfc-grey); min-width: 50px; }
+
+  .sel-btn {
+    padding: 5px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--pfc-grey-border);
+    background: var(--pfc-grey-light);
+    font-size: 11px; font-weight: 500; cursor: pointer;
+    transition: all 0.12s; color: var(--pfc-grey);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .sel-btn:hover { border-color: #999; color: var(--pfc-black); }
+  .sel-btn.active { border-width: 1.5px; font-weight: 600; }
+
+  textarea.idea-input {
+    width: 100%;
+    font-size: 13px; padding: 10px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--pfc-grey-border);
+    background: var(--pfc-grey-light);
+    color: var(--pfc-black); font-family: 'DM Sans', sans-serif;
+    resize: vertical; margin-bottom: 10px; line-height: 1.5;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  textarea.idea-input:focus { border-color: var(--pfc-green); background: white; }
+
+  .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-primary {
+    padding: 9px 18px; border-radius: var(--radius-md);
+    border: none; background: var(--pfc-green);
+    color: white; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--pfc-green-dark); }
+  .btn-secondary {
+    padding: 9px 18px; border-radius: var(--radius-md);
+    border: 1px solid var(--pfc-grey-border);
+    background: transparent; color: var(--pfc-grey);
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--pfc-green); color: var(--pfc-green); }
+
+  /* ── Day editor modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 1000;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex !important; }
+  .modal {
+    background: var(--pfc-white); border-radius: var(--radius-lg);
+    padding: 24px; width: 100%; max-width: 440px;
+    box-shadow: var(--shadow-md); position: relative; z-index: 1001;
+  }
+  .modal-title { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 16px; }
+  .modal label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--pfc-grey); display: block; margin-bottom: 6px; }
+  .modal input[type="text"], .modal select {
+    width: 100%; padding: 9px 12px;
+    border: 1px solid var(--pfc-grey-border); border-radius: var(--radius-md);
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+    color: var(--pfc-black); background: var(--pfc-grey-light);
+    margin-bottom: 14px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .modal input:focus, .modal select:focus { border-color: var(--pfc-green); background: white; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+
+  /* ── Copy toast ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--pfc-green-dark); color: white;
+    padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    z-index: 2000; transition: transform 0.3s ease; pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center; padding: 24px;
+    font-size: 10px; color: #B0B4A8;
+    letter-spacing: 0.05em;
+  }
+  .footer a { color: #B0B4A8; text-decoration: none; }
+  .footer a:hover { color: var(--pfc-grey); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9z" stroke="white" stroke-width="1.5" fill="none"/>
+        <path d="M9 9.5c.5-1 2.5-1.5 3 0M9.5 14.5c.7.8 5 .8 5.5 0" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <circle cx="9" cy="11" r="0.8" fill="white"/>
+        <circle cx="15" cy="11" r="0.8" fill="white"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-name">Prescott Family Chiropractic</div>
+      <div class="header-sub">Social Media Planner — Dr. Nick &amp; Dr. Tate</div>
+    </div>
+  </div>
+  <div class="header-badge">IG + FB · 2–3× / week</div>
+</div>
+
+<div class="main">
+
+  <!-- Pillars -->
+  <div class="section-title">Content pillars</div>
+  <div class="pillars-grid" id="pillarsGrid"></div>
+
+  <!-- Gap alert -->
+  <div class="gap-alert" id="gapAlert">
+    <span class="ga-icon">⚠</span>
+    <span id="gapText"></span>
+  </div>
+
+  <!-- Two col -->
+  <div class="two-col">
+
+    <!-- 9-grid -->
+    <div class="card">
+      <div class="section-title">9-grid health check</div>
+      <div class="grid9" id="grid9"></div>
+      <div class="legend" id="legend9"></div>
+    </div>
+
+    <!-- Week planner -->
+    <div class="card">
+      <div class="week-header">
+        <div class="section-title" style="margin-bottom:0;">This week</div>
+        <div class="week-nav">
+          <button onclick="shiftWeek(-1)" title="Previous week">&#8592;</button>
+          <button onclick="shiftWeek(1)" title="Next week">&#8594;</button>
+        </div>
+      </div>
+      <div id="weekLabel" style="font-size:11px;color:var(--pfc-grey);margin-bottom:10px;"></div>
+      <div class="week-slots" id="weekSlots"></div>
+      <button class="add-day-btn" onclick="openAddDay()">+ Add posting day</button>
+    </div>
+
+  </div>
+
+  <!-- Composer -->
+  <div class="composer">
+    <div class="composer-title">Plan a post</div>
+
+    <div class="composer-row">
+      <span class="c-label">Pillar</span>
+      <div id="pillarBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div class="composer-row">
+      <span class="c-label">Format</span>
+      <div id="formatBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div class="composer-row">
+      <span class="c-label">Doctor</span>
+      <div id="drBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div class="composer-row">
+      <span class="c-label">Day</span>
+      <div id="dayBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+
+    <textarea class="idea-input" id="ideaInput" rows="2" placeholder="Post idea, topic, or caption direction..."></textarea>
+
+    <div class="action-row">
+      <button class="btn-primary" onclick="addPost()">Add to week</button>
+      <button class="btn-secondary" onclick="sendToAI()">Get caption ideas ↗</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Add Day Modal -->
+<div class="modal-overlay" id="addDayModal">
+  <div class="modal">
+    <div class="modal-title">Add posting day</div>
+    <label>Day of week</label>
+    <select id="newDaySelect">
+      <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+      <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+    </select>
+    <label>Optional note</label>
+    <input type="text" id="newDayNote" placeholder="e.g. bonus post week" />
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeAddDay()">Cancel</button>
+      <button class="btn-primary" onclick="confirmAddDay()">Add day</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Prescott Family Chiropractic · Social Planner · Built by <a href="https://dorksocialclub.com" target="_blank">Dork Social Club</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PILLARS = [
+  { id:'edu',  label:'Education',          color:'#2E7D52', bg:'#EAF5EF', border:'#A8D5B8', dark:'#1A4D30' },
+  { id:'nick', label:'Dr. Nick',           color:'#1A5FA8', bg:'#EAF1FB', border:'#A8C4E8', dark:'#0D3B6E' },
+  { id:'tate', label:'Dr. Tate',           color:'#B45309', bg:'#FEF3E2', border:'#F5C784', dark:'#7C3A05' },
+  { id:'fam',  label:'Family life',        color:'#9B2335', bg:'#FDE8EB', border:'#F0A8B2', dark:'#6B1525' },
+  { id:'well', label:'Wellness lifestyle', color:'#5B3FA6', bg:'#F0EDFB', border:'#C4B5F0', dark:'#3D2875' },
+  { id:'comm', label:'Community',          color:'#3D6B1A', bg:'#EDF5E0', border:'#B5D88A', dark:'#284810' },
+];
+const FORMATS = ['Photo','Video','Phone content'];
+const DOCTORS = ['Dr. Nick','Dr. Tate','Both'];
+
+let state = {
+  weekOffset: 0,
+  postingDays: ['Monday','Wednesday','Friday'],
+  posts: [
+    { day:'Monday',    pillar:'edu',  format:'Video',        dr:'Dr. Tate', idea:'What happens to your spine during pregnancy?' },
+    { day:'Wednesday', pillar:'fam',  format:'Photo',        dr:'Both',     idea:"Families at PFC — patient kids after adjustment" },
+  ],
+  grid: [
+    { pillar:'edu',  format:'Video',        dr:'Dr. Tate', label:'Adjustment explained', latest:true },
+    { pillar:'fam',  format:'Photo',        dr:'Both',     label:'Team family moment' },
+    { pillar:'nick', format:'Phone content',dr:'Dr. Nick', label:'Morning thought' },
+    { pillar:'well', format:'Photo',        dr:'Dr. Nick', label:'Trail hike weekend' },
+    { pillar:'comm', format:'Photo',        dr:'Both',     label:'Community spotlight' },
+    { pillar:'tate', format:'Video',        dr:'Dr. Tate', label:'Upper cervical tip' },
+    { pillar:'edu',  format:'Photo',        dr:'Dr. Nick', label:'Posture 101' },
+    { pillar:'fam',  format:'Phone content',dr:'Both',     label:'Office family moment' },
+    null,
+  ],
+  composer: { pillar:null, format:null, dr:null, day:null },
+};
+
+function P(id) { return PILLARS.find(p=>p.id===id); }
+
+/* ── Pillars strip ── */
+function buildPillars() {
+  const el = document.getElementById('pillarsGrid');
+  el.innerHTML = '';
+  PILLARS.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'pillar-chip';
+    d.style.background = p.bg;
+    d.style.borderColor = p.border;
+    d.style.color = p.dark;
+    d.innerHTML = `<span class="chip-dot" style="background:${p.color}"></span>${p.label}`;
+    el.appendChild(d);
+  });
+}
+
+/* ── 9-grid ── */
+function buildGrid() {
+  const el = document.getElementById('grid9');
+  el.innerHTML = '';
+  // Newest top-left like real IG — reverse the array so latest is first
+  const display = [...state.grid].reverse();
+  display.forEach((cell) => {
+    const d = document.createElement('div');
+    d.className = 'grid-cell' + (cell ? ' filled' : '') + (cell && cell.latest ? ' latest' : '');
+    if (cell) {
+      const p = P(cell.pillar);
+      d.innerHTML = (cell.latest ? '<span class="cell-badge">NEW</span>' : '') +
+        `<div class="cell-dot" style="background:${p.color}"></div>
+         <div class="cell-label">${cell.label}</div>
+         <div class="cell-format">${cell.format}</div>`;
+    } else {
+      d.innerHTML = '<span class="cell-empty">+</span>';
+    }
+    el.appendChild(d);
+  });
+
+  const legend = document.getElementById('legend9');
+  legend.innerHTML = '';
+  const covered = new Set(state.grid.filter(Boolean).map(c=>c.pillar));
+  PILLARS.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'legend-item' + (covered.has(p.id) ? '' : ' missing');
+    d.innerHTML = `<div class="legend-dot" style="background:${covered.has(p.id)?p.color:'#C8CCBC'}"></div>${p.label}`;
+    legend.appendChild(d);
+  });
+
+  // Gap alert
+  const missing = PILLARS.filter(p=>!covered.has(p.id)).map(p=>p.label);
+  const alert = document.getElementById('gapAlert');
+  if (missing.length) {
+    alert.style.display = 'flex';
+    document.getElementById('gapText').textContent =
+      `Grid gap: no "${missing.join('" or "')}" post in your last 9. Post one soon to keep your feed balanced.`;
+  } else {
+    alert.style.display = 'none';
+  }
+}
+
+/* ── Week planner ── */
+function getWeekDates(offset) {
+  const now = new Date();
+  const day = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
+  return monday;
+}
+
+function formatWeekLabel(offset) {
+  const monday = getWeekDates(offset);
+  const friday = new Date(monday); friday.setDate(monday.getDate() + 4);
+  const opts = { month:'short', day:'numeric' };
+  if (offset === 0) return `This week · ${monday.toLocaleDateString('en-US',opts)} – ${friday.toLocaleDateString('en-US',opts)}`;
+  if (offset === -1) return `Last week · ${monday.toLocaleDateString('en-US',opts)} – ${friday.toLocaleDateString('en-US',opts)}`;
+  if (offset === 1) return `Next week · ${monday.toLocaleDateString('en-US',opts)} – ${friday.toLocaleDateString('en-US',opts)}`;
+  return `${monday.toLocaleDateString('en-US',opts)} – ${friday.toLocaleDateString('en-US',opts)}`;
+}
+
+function buildWeek() {
+  document.getElementById('weekLabel').textContent = formatWeekLabel(state.weekOffset);
+  const el = document.getElementById('weekSlots');
+  el.innerHTML = '';
+  state.postingDays.forEach(day => {
+    const post = state.posts.find(p=>p.day===day);
+    const row = document.createElement('div');
+    row.className = 'slot';
+    row.innerHTML = `<div class="slot-day">${day.slice(0,3)}<span>${day.slice(3)}</span></div>
+      <div class="slot-card${post?' has-post':''}" id="slot-${day}" onclick="clickSlot('${day}')">
+        ${post
+          ? `<div class="slot-dot" style="background:${P(post.pillar).color}"></div>
+             <div class="slot-text">${post.idea}</div>
+             <div class="slot-meta">${post.format} · ${post.dr}</div>`
+          : `<div class="slot-empty">Open — click to add</div>`
+        }
+      </div>
+      <button class="slot-del" onclick="event.stopPropagation();removeDay('${day}')" title="Remove day">×</button>`;
+    el.appendChild(row);
+  });
+
+  // rebuild day buttons in composer
+  buildDayBtns();
+}
+
+function shiftWeek(dir) { state.weekOffset += dir; buildWeek(); }
+
+function clickSlot(day) {
+  // pre-select day in composer and scroll to it
+  state.composer.day = day;
+  buildDayBtns();
+  document.querySelector('.composer').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function removeDay(day) {
+  state.postingDays = state.postingDays.filter(d=>d!==day);
+  state.posts = state.posts.filter(p=>p.day!==day);
+  saveState();
+  buildWeek();
+}
+
+/* ── Add day modal ── */
+function openAddDay() { document.getElementById('addDayModal').classList.add('open'); }
+function closeAddDay() { document.getElementById('addDayModal').classList.remove('open'); }
+function confirmAddDay() {
+  const day = document.getElementById('newDaySelect').value;
+  if (!state.postingDays.includes(day)) {
+    const order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+    state.postingDays.push(day);
+    state.postingDays.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+  }
+  closeAddDay();
+  saveState();
+  buildWeek();
+}
+
+/* ── Composer ── */
+function buildComposer() {
+  buildPillarBtns();
+  buildFormatBtns();
+  buildDrBtns();
+  buildDayBtns();
+}
+
+function buildPillarBtns() {
+  const el = document.getElementById('pillarBtns');
+  el.innerHTML = '';
+  PILLARS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'sel-btn' + (state.composer.pillar===p.id?' active':'');
+    btn.textContent = p.label;
+    if (state.composer.pillar===p.id) {
+      btn.style.background=p.bg; btn.style.borderColor=p.color; btn.style.color=p.dark;
+    }
+    btn.onclick = () => { state.composer.pillar = p.id; buildPillarBtns(); };
+    el.appendChild(btn);
+  });
+}
+
+function buildFormatBtns() {
+  const el = document.getElementById('formatBtns');
+  el.innerHTML = '';
+  FORMATS.forEach(f => {
+    const btn = document.createElement('button');
+    const isActive = state.composer.format === f;
+    btn.className = 'sel-btn' + (isActive ? ' active' : '');
+    btn.textContent = f;
+    if (isActive) {
+      btn.style.background = '#EAF2EC';
+      btn.style.borderColor = '#3A6B4A';
+      btn.style.color = '#1F3D2A';
+    }
+    btn.onclick = () => { state.composer.format = f; buildFormatBtns(); };
+    el.appendChild(btn);
+  });
+}
+
+function buildDrBtns() {
+  const el = document.getElementById('drBtns');
+  el.innerHTML = '';
+  DOCTORS.forEach(d => {
+    const btn = document.createElement('button');
+    const isActive = state.composer.dr === d;
+    btn.className = 'sel-btn' + (isActive ? ' active' : '');
+    btn.textContent = d;
+    if (isActive) {
+      btn.style.background = '#EAF2EC';
+      btn.style.borderColor = '#3A6B4A';
+      btn.style.color = '#1F3D2A';
+    }
+    btn.onclick = () => { state.composer.dr = d; buildDrBtns(); };
+    el.appendChild(btn);
+  });
+}
+
+function buildDayBtns() {
+  const el = document.getElementById('dayBtns');
+  if (!el) return;
+  el.innerHTML = '';
+  state.postingDays.forEach(d => {
+    const btn = document.createElement('button');
+    const isActive = state.composer.day === d;
+    btn.className = 'sel-btn' + (isActive ? ' active' : '');
+    btn.textContent = d.slice(0,3);
+    if (isActive) {
+      btn.style.background = '#EAF2EC';
+      btn.style.borderColor = '#3A6B4A';
+      btn.style.color = '#1F3D2A';
+    }
+    btn.onclick = () => { state.composer.day = d; buildDayBtns(); };
+    el.appendChild(btn);
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function saveState() {
+  try { localStorage.setItem('pfc-planner', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('pfc-planner');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state.postingDays = parsed.postingDays || state.postingDays;
+      state.posts = parsed.posts || state.posts;
+      state.grid = parsed.grid || state.grid;
+    }
+  } catch(e) {}
+}
+
+function addPost() {
+  const { pillar, format, dr, day } = state.composer;
+  const idea = document.getElementById('ideaInput').value.trim();
+  if (!pillar || !idea) {
+    showToast('Pick a pillar and add a post idea first!');
+    return;
+  }
+  if (day) {
+    const existing = state.posts.findIndex(p=>p.day===day);
+    const entry = { day, pillar, format:format||'Photo', dr:dr||'Both', idea };
+    if (existing >= 0) state.posts[existing] = entry;
+    else state.posts.push(entry);
+  }
+  const emptyIdx = state.grid.findIndex(c=>c===null);
+  if (emptyIdx >= 0) {
+    state.grid[emptyIdx] = { pillar, format:format||'Photo', dr:dr||'Both', label:idea.substring(0,24) };
+  } else {
+    state.grid.push({ pillar, format:format||'Photo', dr:dr||'Both', label:idea.substring(0,24) });
+    state.grid.shift();
+  }
+  state.grid.forEach(c=>{ if(c) c.latest=false; });
+  const newCell = state.grid[emptyIdx>=0?emptyIdx:state.grid.length-1];
+  if (newCell) newCell.latest = true;
+
+  document.getElementById('ideaInput').value = '';
+  saveState();
+  buildGrid();
+  buildWeek();
+  showToast('Post added!');
+}
+
+function sendToAI() {
+  const { pillar, format, dr } = state.composer;
+  const idea = document.getElementById('ideaInput').value.trim();
+  const p = pillar ? P(pillar) : null;
+  const prompt = [
+    `Write 2–3 Instagram/Facebook caption options for Prescott Family Chiropractic.`,
+    p ? `Content pillar: ${p.label}.` : '',
+    format ? `Format: ${format}.` : '',
+    dr ? `Featuring: ${dr}.` : '',
+    idea ? `Post idea: ${idea}.` : '',
+    `Tone: warm, educational, community-focused — not salesy. Speak to Prescott families. Strong hook at the start. Concise and punchy.`,
+  ].filter(Boolean).join(' ');
+
+  if (typeof sendPrompt === 'function') {
+    sendPrompt(prompt);
+  } else {
+    navigator.clipboard.writeText(prompt).then(() => {
+      showToast('Caption brief copied! Paste into ChatGPT or Claude.');
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = prompt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Caption brief copied! Paste into ChatGPT or Claude.');
+    });
+  }
+}
+
+/* ── Init ── */
+loadState();
+buildPillars();
+buildGrid();
+buildWeek();
+buildComposer();
+</script>
+</body>
+</html>
